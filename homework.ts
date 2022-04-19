@@ -21,6 +21,18 @@ interface Entity {
   }
  */
 
+type Writable<T> = { -readonly [P in keyof T]: T[P] };
+type Mandatory<T> = Required<T>
+type WithoutIdAndEthnicity<T> = Omit<T, "id" | "ethnicity">;
+type OnlyBooleans<T> = { [P in keyof T]: boolean };
+
+type ModifiedEntity = Writable<Mandatory<WithoutIdAndEthnicity<OnlyBooleans<Entity>>>>
+
+const testEntity: ModifiedEntity = {
+  name: true,
+  age: false,
+}
+
 // EX 2 ------------------------------------------------
 /*
 /*HW
@@ -32,10 +44,23 @@ interface Entity {
 * Else passed in type extends Anything Else, IdOrName - will be of type {age: boolean}
  */
 
+interface Id {
+  id: number;
+}
+interface Name {
+  name: string;
+}
+type IdOrName<T> = T extends Id ? number : T extends Name ? string : { age: boolean }
+
+const testEx2: IdOrName<{}> = { age: true } 
+
+
 // EX 3 ------------------------------------------------
 /*
  Write a detailed explanation with images || steps || words how ex 5 withLet function works and why did we get the expected result
  */
+
+ // Hoisting, scope
 
 // EX 4 ------------------------------------------------
 //Having two interfaces:
@@ -59,6 +84,38 @@ Replicate an API response that will have the following structure:
   errors: string[]
 }
 */
+
+interface User {
+  id: number;
+  name: string;
+  age: number;
+}
+
+interface Car {
+  id: number;
+  color: string;
+  numberOfDoors: number;
+}
+
+type ResponseData<T> = {
+  data: {
+    [key: string]: T | number;
+    pagination: number;
+  }
+  errors: Array<string>
+}
+
+const car: ResponseData<Car> = {
+  data: {
+    car: {
+      id: 1,
+      color: 'white',
+      numberOfDoors: 5
+    },
+    pagination: 1
+  },
+  errors: ['Loading car error']
+}
 
 // EX 5 ------------------------------
 // Write a class decorator, method decorator and parameter decorator functions for any Class the logic inside each decorator is up to you e.g.:
